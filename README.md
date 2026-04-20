@@ -111,3 +111,56 @@ npm install
 npm run build
 npm run verify
 ```
+
+## Releasing
+
+Releases are cut from `main` and published to npm by a GitHub Actions workflow
+(`.github/workflows/publish.yml`) that triggers on any pushed tag matching
+`v*`. The tag and the version bump are produced by the same `npm version`
+command, so it's not possible to tag a release without also bumping
+`package.json`.
+
+**Prerequisites (one-time):**
+
+*   Repo secret `NPM_TOKEN` set to an npm automation token with publish access
+    to the `@joinflux` scope.
+*   Local `main` clean and up to date with `origin/main`.
+
+**To release:**
+
+```bash
+# pick the bump that fits the change
+npm version patch   # 0.1.0 → 0.1.1 — bug fixes, docs
+npm version minor   # 0.1.0 → 0.2.0 — new API, additive
+npm version major   # 0.1.0 → 1.0.0 — breaking change
+
+git push --follow-tags
+```
+
+`npm version` bumps `package.json` and `package-lock.json`, commits the change
+with the version as the message, and creates a matching `vX.Y.Z` tag.
+`git push --follow-tags` pushes the commit and the tag in one step.
+
+**What the workflow does** on seeing the tag:
+
+1.  Verifies the tag (e.g. `v0.2.0`) matches `package.json.version`. If not,
+    it fails fast — this catches tags created by hand without a version bump.
+2.  Runs `npm ci` and `npm run build`.
+3.  Runs `npm publish --access public --provenance` using `NPM_TOKEN`. The
+    `--provenance` flag attaches a signed attestation linking the published
+    tarball back to this repo and this commit.
+4.  Creates a GitHub Release for the tag with auto-generated release notes
+    from the commits since the previous tag.
+
+**If something goes wrong:**
+
+*   *Tag pushed but workflow failed before publish* — fix the problem, delete
+    the tag (`git tag -d vX.Y.Z && git push --delete origin vX.Y.Z`), and
+    re-run `npm version` with the same version using `--allow-same-version`
+    after resetting, or cut the next patch version. Don't try to reuse a
+    version once it's been published to npm — npm rejects republishing the
+    same version even after `npm unpublish`.
+*   *Published to npm but Release step failed* — run `gh release create vX.Y.Z
+    --generate-notes` locally to create the release after the fact.
+*   *Wrong version published* — bump again (`npm version patch`) and release
+    the fix forward; never rewrite history on `main`.
