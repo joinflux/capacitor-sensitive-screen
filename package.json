@@ -1,6 +1,6 @@
 {
   "name": "@joinflux/capacitor-sensitive-screen",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Capacitor 6 plugin for per-route screen-capture and snapshot protection on Android and iOS.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
