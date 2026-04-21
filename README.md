@@ -52,22 +52,55 @@ Android's `FLAG_SECURE` is scoped to the window and is gone on relaunch; the
 iOS overlay is only inserted on `willResignActive`, so there's nothing to clean
 up on restart.
 
+### Customizing the iOS overlay
+
+The iOS overlay defaults to opaque black. Pass options into `enable()` to
+change it:
+
+```ts
+// Branded solid color
+await SensitiveScreen.enable({
+  style: 'solid',
+  backgroundColor: '#0A0F1C',
+  imageName: 'LaunchLogo', // optional, rendered centered
+});
+
+// Or a system blur effect over whatever is underneath
+await SensitiveScreen.enable({
+  style: 'blur',
+  blurStyle: 'regular',
+});
+```
+
+Options are applied on each `enable()` call — there is no separate configure
+step. `imageName` must resolve via `UIImage(named:)`, so ship the asset in
+your iOS app target's asset catalog. Android and Web ignore these options:
+Android's protection is drawn by the OS via `FLAG_SECURE`, and Web has no
+overlay.
+
+Because the overlay is inserted synchronously inside `willResignActive`, all
+styling has to be handed to the native side up front — the plugin
+deliberately does not round-trip to JS at snapshot time, which would be too
+late to cover the App Switcher preview.
+
 ## API
 
 <docgen-index>
 
-* [`enable()`](#enable)
+* [`enable(...)`](#enable)
 * [`disable()`](#disable)
+* [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-### enable()
+### enable(...)
 
 ```typescript
-enable() => Promise<void>
+enable(options?: SensitiveScreenEnableOptions | undefined) => Promise<void>
 ```
 
 Turn on screen-capture / snapshot protection for the current app session.
@@ -79,7 +112,16 @@ On iOS this arms an overlay that is shown when the app resigns active,
 covering the system snapshot used in the App Switcher. The overlay is
 not inserted until `willResignActive` fires.
 
+The `options` argument configures the iOS overlay's appearance. It is
+ignored on Android (protection is drawn by the OS via `FLAG_SECURE`) and
+Web (no-op). Each call replaces the previous options wholesale — pass
+every field you want set.
+
 Stateful: stays on until {@link disable} is called.
+
+| Param         | Type                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#sensitivescreenenableoptions">SensitiveScreenEnableOptions</a></code> |
 
 --------------------
 
@@ -98,6 +140,32 @@ active).
 
 --------------------
 
+
+### Interfaces
+
+
+#### SensitiveScreenEnableOptions
+
+| Prop                  | Type                                                                                | Description                                                                                                                                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`style`**           | <code><a href="#sensitivescreenoverlaystyle">SensitiveScreenOverlayStyle</a></code> | iOS only. Visual style of the snapshot-protection overlay. - `'solid'`: fills the window with {@link backgroundColor}. - `'blur'`: uses a `UIVisualEffectView` with a `UIBlurEffect` of {@link blurStyle}. Default: `'solid'`. |
+| **`backgroundColor`** | <code>string</code>                                                                 | iOS only. Hex color string (`'#RRGGBB'` or `'#RRGGBBAA'`) used as the overlay background when {@link style} is `'solid'`. Default: `'#000000'`.                                                                                |
+| **`blurStyle`**       | <code><a href="#sensitivescreenblurstyle">SensitiveScreenBlurStyle</a></code>       | iOS only. `UIBlurEffect` style used when {@link style} is `'blur'`. Default: `'regular'`.                                                                                                                                      |
+| **`imageName`**       | <code>string</code>                                                                 | iOS only. Name of an image in the app's main bundle / asset catalog to render centered on top of the overlay (e.g. a logo). The consuming app is responsible for shipping the asset natively.                                  |
+
+
+### Type Aliases
+
+
+#### SensitiveScreenOverlayStyle
+
+<code>'solid' | 'blur'</code>
+
+
+#### SensitiveScreenBlurStyle
+
+<code>'light' | 'dark' | 'regular' | 'prominent' | 'extraLight'</code>
+
 </docgen-api>
 
 ## iOS: why `willResignActive`, not `didEnterBackground`
@@ -114,9 +182,10 @@ normal foreground use). A transient resign-active event (a pulled-down Control
 Center, an incoming call banner) will flash the overlay briefly — that's
 intentional; the alternative leaks the view.
 
-`enable()` and `disable()` only flip an internal flag. They deliberately do
-**not** manipulate the view hierarchy on their own — only the notification
-handlers do — so there is one code path that owns the overlay lifecycle.
+`enable()` and `disable()` only flip an internal flag (and, on iOS, record
+the overlay options). They deliberately do **not** manipulate the view
+hierarchy on their own — only the notification handlers do — so there is one
+code path that owns the overlay lifecycle.
 
 ## Development
 
