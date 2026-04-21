@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "@joinflux/capacitor-sensitive-screen",
   "version": "0.1.6",
   "description": "Capacitor 6 plugin for per-route screen-capture and snapshot protection on Android and iOS.",
@@ -18,6 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/joinflux/capacitor-sensitive-screen.git"
   },
+  "author": "Gustavo Hoirisch",
   "bugs": {
     "url": "https://github.com/joinflux/capacitor-sensitive-screen/issues"
   },
