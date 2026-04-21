@@ -1,4 +1,4 @@
-package finance.flux.sensitivescreen;
+package com.joinflux.sensitivescreen;
 
 import android.view.WindowManager;
 

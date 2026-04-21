@@ -56,8 +56,8 @@ up on restart.
 
 <docgen-index>
 
-*   [`enable()`](#enable)
-*   [`disable()`](#disable)
+* [`enable()`](#enable)
+* [`disable()`](#disable)
 
 </docgen-index>
 
@@ -82,6 +82,7 @@ not inserted until `willResignActive` fires.
 Stateful: stays on until {@link disable} is called.
 
 --------------------
+
 
 ### disable()
 
