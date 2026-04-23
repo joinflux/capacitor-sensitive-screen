@@ -65,6 +65,9 @@
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "capacitor": {
     "ios": {
       "src": "ios"
