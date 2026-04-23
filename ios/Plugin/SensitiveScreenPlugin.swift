@@ -148,7 +148,7 @@ public class SensitiveScreenPlugin: CAPPlugin {
             host.addSubview(imageView)
             NSLayoutConstraint.activate([
                 imageView.centerXAnchor.constraint(equalTo: host.centerXAnchor),
-                imageView.centerYAnchor.constraint(equalTo: host.centerYAnchor),
+                imageView.centerYAnchor.constraint(equalTo: host.centerYAnchor)
             ])
         }
 
