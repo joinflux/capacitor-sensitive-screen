@@ -67,11 +67,26 @@ public class SensitiveScreenPlugin: CAPPlugin {
 
     private func handleWillResignActive() {
         guard isEnabled, overlayView == nil else { return }
-        guard let window = UIApplication.shared.windows.first else { return }
+        guard let window = activeKeyWindow() else { return }
 
         let overlay = buildOverlay(frame: window.bounds)
         window.addSubview(overlay)
         overlayView = overlay
+    }
+
+    private func activeKeyWindow() -> UIWindow? {
+        let scenes = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+
+        if let active = scenes.first(where: { $0.activationState == .foregroundActive }) {
+            return active.keyWindow ?? active.windows.first { $0.isKeyWindow } ?? active.windows.first
+        }
+
+        if let inactive = scenes.first(where: { $0.activationState == .foregroundInactive }) {
+            return inactive.keyWindow ?? inactive.windows.first { $0.isKeyWindow } ?? inactive.windows.first
+        }
+
+        return nil
     }
 
     private func handleDidBecomeActive() {
@@ -133,7 +148,7 @@ public class SensitiveScreenPlugin: CAPPlugin {
             host.addSubview(imageView)
             NSLayoutConstraint.activate([
                 imageView.centerXAnchor.constraint(equalTo: host.centerXAnchor),
-                imageView.centerYAnchor.constraint(equalTo: host.centerYAnchor),
+                imageView.centerYAnchor.constraint(equalTo: host.centerYAnchor)
             ])
         }
 

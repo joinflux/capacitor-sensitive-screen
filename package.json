@@ -37,7 +37,7 @@
     "fmt": "npm run biome:fix && npm run prettier -- --write && npm run swiftlint -- --fix --format",
     "biome": "biome check src",
     "biome:fix": "biome check --write src",
-    "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
+    "prettier": "prettier \"**/*.{css,html,ts,js}\"",
     "swiftlint": "node-swiftlint",
     "docgen": "docgen --api SensitiveScreenPlugin --output-readme README.md --output-json dist/docs.json",
     "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.mjs",
@@ -65,6 +65,9 @@
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "capacitor": {
     "ios": {
       "src": "ios"

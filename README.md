@@ -31,7 +31,7 @@ Requirements:
 ## Usage
 
 ```ts
-import { SensitiveScreen } from 'capacitor-sensitive-screen';
+import { SensitiveScreen } from '@joinflux/capacitor-sensitive-screen';
 import { useEffect } from 'react';
 
 export function AccountStatementRoute() {
@@ -228,9 +228,7 @@ with the version as the message, and creates a matching `vX.Y.Z` tag.
 1.  Verifies the tag (e.g. `v0.2.0`) matches `package.json.version`. If not,
     it fails fast — this catches tags created by hand without a version bump.
 2.  Runs `npm ci` and `npm run build`.
-3.  Runs `npm publish --access public --provenance` using `NPM_TOKEN`. The
-    `--provenance` flag attaches a signed attestation linking the published
-    tarball back to this repo and this commit.
+3.  Runs `npm publish --access public` using `Trusted Publisher`.
 4.  Creates a GitHub Release for the tag with auto-generated release notes
     from the commits since the previous tag.
 

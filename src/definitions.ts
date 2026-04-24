@@ -1,11 +1,6 @@
 export type SensitiveScreenOverlayStyle = 'solid' | 'blur';
 
-export type SensitiveScreenBlurStyle =
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'extraLight';
+export type SensitiveScreenBlurStyle = 'light' | 'dark' | 'regular' | 'prominent' | 'extraLight';
 
 export interface SensitiveScreenEnableOptions {
   /**
