@@ -25,7 +25,7 @@ npx cap sync
 Requirements:
 
 *   Capacitor `^6.0.0`
-*   iOS `13.0+`
+*   iOS `15.0+`
 *   Android `minSdk 22`
 
 ## Usage
