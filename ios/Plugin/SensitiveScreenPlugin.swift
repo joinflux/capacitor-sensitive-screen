@@ -2,7 +2,13 @@ import Capacitor
 import UIKit
 
 @objc(SensitiveScreenPlugin)
-public class SensitiveScreenPlugin: CAPPlugin {
+public class SensitiveScreenPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "SensitiveScreenPlugin"
+    public let jsName = "SensitiveScreen"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "enable", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "disable", returnType: CAPPluginReturnPromise),
+    ]
 
     private enum OverlayStyle: String {
         case solid
